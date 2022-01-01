@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 
 const AppBar = () => {
-    const { user , logOut} = useAuth()
+    const { user , admin, logOut} = useAuth()
     console.log(user);
     const [menuOpen, setMenuOpen] = useState(false);
     return (
@@ -46,17 +46,37 @@ const AppBar = () => {
                                     <li className='nav-item'>
                                         <Link
                                             className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
-                                            to='/services'
+                                            to='/packages'
                                         >
                                             Services
                                         </Link>
                                     </li>
                                     {user?.email ? (
-                                        <li className='nav-item'>
-                                            <button
-                                                onClick={logOut}
-                                                className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
-                                            >Logout</button>
+                                        <li className='flex'>
+                                            <li>
+                                                <Link
+                                                    className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                                    to='/user-dashboard'
+                                                >
+                                                    User Dashboard
+                                                </Link>
+                                            </li>
+                                            {admin ? <li>
+                                                <Link
+                                                    className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                                    to='/admin-dashboard'
+                                                >
+                                                    Admin Dashboard
+                                                </Link>
+                                            </li>: ""}
+                                            <li className='nav-item'>
+                                                <button
+                                                    onClick={logOut}
+                                                    className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                                >
+                                                    Logout
+                                                </button>
+                                            </li>
                                         </li>
                                     ) : (
                                         <li className='flex'>

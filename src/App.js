@@ -5,7 +5,11 @@ import SignUp from "./components/pages/SignUp/SignUp";
 import AuthProvider from "./context/AuthProvider";
 import Login from "./components/pages/Login/Login";
 import AdminRoute from "./routes/AdminRoute";
+import PrivateRoute from "./routes/PrivateRoute";
 import AdminDashboard from "./components/pages/AdminDashboard/AdminDashboard";
+import Packages from "./components/pages/Packages/Packages";
+import UserDashboard from "./components/pages/UserDashBoard/UserDashboard";
+import Checkout from "./components/pages/Checkout/Checkout";
 
 function App() {
     return (
@@ -22,7 +26,16 @@ function App() {
                         <Route exact path='/login'>
                             <Login></Login>
                         </Route>
-                        <AdminRoute exact path='/dashboard'>
+                        <PrivateRoute exact path='/packages'>
+                            <Packages></Packages>
+                        </PrivateRoute>
+                        <PrivateRoute exact path='/checkout/:id'>
+                            <Checkout></Checkout>
+                        </PrivateRoute>
+                        <PrivateRoute exact path='/user-dashboard'>
+                            <UserDashboard></UserDashboard>
+                        </PrivateRoute>
+                        <AdminRoute exact path='/admin-dashboard'>
                             <AdminDashboard></AdminDashboard>
                         </AdminRoute>
                     </Switch>

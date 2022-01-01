@@ -20,25 +20,20 @@ const useFirebase = () => {
     const [user, setUser] = useState([]);
     const [error, setError] = useState([]);
     const [isLogin, setIsLogin] = useState(true);
-    const history =useHistory()
+    
     const getName = (e) => {
         setUserName(e.target.value);
     };
     const getEmail = (e) => {
-        console.log(e.target.value)
+        console.log(e.target.value);
         setUserEmail(e.target.value);
     };
     const getPassword = (e) => {
         setUserPassword(e.target.value);
     };
-    
+
     const registerWithEmailAndPass = (email, password, name) => {
-        return createUserWithEmailAndPassword(
-            auth,
-            email,
-            password,
-            name
-        );
+        return createUserWithEmailAndPassword(auth, email, password, name);
     };
 
     const handleEmailAndPassword = () => {
@@ -56,7 +51,7 @@ const useFirebase = () => {
     }, [auth]);
 
     useEffect(() => {
-        fetch(`https://still-shelf-07747.herokuapp.com/users/${user.email}`)
+        fetch(`https://salty-bayou-85327.herokuapp.com/users/${user.email}`)
             .then((res) => res.json())
             .then((data) => setAdmin(data.admin));
     }, [user.email]);
@@ -67,9 +62,9 @@ const useFirebase = () => {
         });
         setIsLogin(true);
     };
-    const saveUser = (data, role, method) => {
-        const user = { ...data , role: role};
-        fetch("http://localhost:5000/users", {
+    const saveUser = (data, method) => {
+        const user = { ...data };
+        fetch("https://salty-bayou-85327.herokuapp.com/users", {
             method: method,
             headers: {
                 "content-type": "application/json",
@@ -99,7 +94,7 @@ const useFirebase = () => {
         return () => unsubscribed;
     }, []);
     useEffect(() => {
-        fetch(`http://localhost:5000/users/${user.email}`)
+        fetch(`https://salty-bayou-85327.herokuapp.com/users/${user.email}`)
             .then((res) => res.json())
             .then((data) => setAdmin(data.admin));
     }, [user.email]);

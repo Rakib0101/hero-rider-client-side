@@ -4,6 +4,7 @@ import useAuth from "../hooks/useAuth";
 
 const AdminRoute = ({ children, ...rest }) => {
     const { user, isLogin, admin } = useAuth();
+    console.log(admin);
     if (isLogin) {
         return (
             <div class='h-screen flex justify-center items-center'>

@@ -9,6 +9,8 @@ import Footer from '../../shared/Footer/Footer';
 const AdminDashboard = () => {
     const [users, setUsers] = useState();
     const [filters, setFilters] = useState({});
+    const [pageCount, setPageCount] = useState(0)
+    const [page,setPage] = useState(0)
     const [monitorUser, setMonitorUser] = useState(true);
     const {
         register,
@@ -20,7 +22,7 @@ const AdminDashboard = () => {
         const { option, searchText } = data;
         handleFilter(option, searchText)   
     }
-    let url = `http://localhost:5000/users`;
+    let url = `https://salty-bayou-85327.herokuapp.com/users`;
     
     console.log(users)
     const handleFilter = (option,searchText) => {     
@@ -31,19 +33,23 @@ const AdminDashboard = () => {
         });
         setMonitorUser(!monitorUser);
     };
-    url = `http://localhost:5000/users?${
+    url = `https://salty-bayou-85327.herokuapp.com/users?${
         filters.option ==='email' ? `email=${filters.searchText}&` : ""
     }${filters.option === 'phone' ? `phone=${filters.searchText}&` : ""}${
         filters.option === 'fullName' ? `fullName=${filters.searchText}&` : ""
-        }`;
+        }${filters.option=== 'age' ? `age=${filters.searchText}&` : ''}`;
     console.log(url)
     useEffect(() => {
         axios.get(url).then((res) => {
-            setUsers(res.data);
+            setUsers(res.data.userFilter);
+            const count = res.data.count;
+            const pageNumber = Math.ceil(count / 2);
+            setPageCount(pageNumber);
         });
     }, [monitorUser]);
-    const onSubmitCheckBox = (data) => {
-        console.log(data)
+
+    const handleCheckBox = (e) => {
+        console.log(e.target.value);
     };
     const { isLogin } = useAuth();
     return (
@@ -72,6 +78,9 @@ const AdminDashboard = () => {
                                         <option value='fullName'>
                                             Full Name
                                         </option>
+                                        <option value='age'>
+                                            Age
+                                        </option>
                                     </select>
                                     {errors.func && (
                                         <p style={{ color: "red" }}>
@@ -80,7 +89,7 @@ const AdminDashboard = () => {
                                         </p>
                                     )}
                                     <input
-                                        className='w-full mr-2 px-4 outline-0'
+                                        className='w-full mr-2 px-4 text-black outline-0'
                                         type='text'
                                         {...register("searchText", {
                                             required: true,
@@ -98,13 +107,19 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 <div className='flex flex-col'>
-                    <form action='' onSubmit={handleSubmit(onSubmitCheckBox)}>
+                    <form action=''>
                         <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
                             <div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
-                                <div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
+                                <div className='shadow overflow-hidden border-b border-gray-200 '>
                                     <table className='min-w-full divide-y divide-gray-200'>
-                                        <thead className='bg-gray-50'>
+                                        <thead className='bg-purple-300'>
                                             <tr>
+                                                <th
+                                                    scope='col'
+                                                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                                                >
+                                                    Profile Image
+                                                </th>
                                                 <th
                                                     scope='col'
                                                     className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
@@ -115,7 +130,13 @@ const AdminDashboard = () => {
                                                     scope='col'
                                                     className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                                                 >
-                                                    Contact
+                                                    Email
+                                                </th>
+                                                <th
+                                                    scope='col'
+                                                    className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                                                >
+                                                    Phone no.
                                                 </th>
                                                 <th
                                                     scope='col'
@@ -140,34 +161,39 @@ const AdminDashboard = () => {
                                         <tbody className='bg-white divide-y divide-gray-200'>
                                             {users?.map((user) => (
                                                 <tr key={user?._id}>
+                                                    <td className='px-6 py-4 whitespace-nowrap flex items-center'>
+                                                        <div className=''>
+                                                            <input
+                                                                onChange={
+                                                                    handleCheckBox
+                                                                }
+                                                                type='checkbox'
+                                                                name=''
+                                                                id=''
+                                                                {...register(
+                                                                    "checkBox",
+                                                                    {
+                                                                        required: false,
+                                                                    }
+                                                                )}
+                                                            />
+                                                        </div>
+                                                        <div className='flex-shrink-0 h-10 w-10'>
+                                                            <img
+                                                                className='h-10 w-10 rounded-full'
+                                                                src={
+                                                                    user?.profileImage
+                                                                }
+                                                                alt=''
+                                                            />
+                                                        </div>
+                                                    </td>
                                                     <td className='px-6 py-4 whitespace-nowrap'>
                                                         <div className='flex items-center'>
-                                                            <div>
-                                                                <input
-                                                                    type='checkbox'
-                                                                    name=''
-                                                                    id=''
-                                                                    {...register(
-                                                                        "checkBox",
-                                                                        {
-                                                                            required: false,
-                                                                        }
-                                                                    )}
-                                                                />
-                                                            </div>
-                                                            <div className='flex-shrink-0 h-10 w-10'>
-                                                                <img
-                                                                    className='h-10 w-10 rounded-full'
-                                                                    src={
-                                                                        user?.profileImage
-                                                                    }
-                                                                    alt=''
-                                                                />
-                                                            </div>
                                                             <div className='ml-4'>
                                                                 <div className='text-sm font-medium text-gray-900'>
                                                                     {
-                                                                        user?.full_name
+                                                                        user?.fullName
                                                                     }
                                                                 </div>
                                                             </div>
@@ -177,6 +203,8 @@ const AdminDashboard = () => {
                                                         <div className='text-sm text-gray-900'>
                                                             {user.email}
                                                         </div>
+                                                    </td>
+                                                    <td className='px-6 py-4 whitespace-nowrap'>
                                                         <div className='text-sm text-gray-500'>
                                                             {user.phone}
                                                         </div>
@@ -211,7 +239,23 @@ const AdminDashboard = () => {
                         />
                     </form>
                 </div>
+                <div className='pagination my-4'>
+                    {[...Array(pageCount).keys()].map((number) => (
+                        <button
+                            onClick={() => setPage(number)}
+                            key={number}
+                            className={
+                                number === page
+                                    ? "bg-red-600 text-white mr-2 px-4 py-1 rounded"
+                                    : "bg-gray-600 text-white mr-2 px-4 py-1 rounded"
+                            }
+                        >
+                            {number + 1}
+                        </button>
+                    ))}
+                </div>
             </div>
+
             <Footer></Footer>
         </div>
     );
