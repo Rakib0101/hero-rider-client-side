@@ -8,6 +8,7 @@ import {
     signOut,
 } from "firebase/auth";
 import firebaseInit from "../Firebase/firebase.init";
+import { useHistory } from "react-router-dom";
 
 firebaseInit();
 const useFirebase = () => {
@@ -19,25 +20,27 @@ const useFirebase = () => {
     const [user, setUser] = useState([]);
     const [error, setError] = useState([]);
     const [isLogin, setIsLogin] = useState(true);
-
+    const history =useHistory()
     const getName = (e) => {
         setUserName(e.target.value);
     };
     const getEmail = (e) => {
+        console.log(e.target.value)
         setUserEmail(e.target.value);
     };
     const getPassword = (e) => {
         setUserPassword(e.target.value);
     };
     
-    const registerWithEmailAndPass = () => {
+    const registerWithEmailAndPass = (email, password, name) => {
         return createUserWithEmailAndPassword(
             auth,
-            userEmail,
-            userPassword,
-            userName
+            email,
+            password,
+            name
         );
     };
+
     const handleEmailAndPassword = () => {
         return signInWithEmailAndPassword(auth, userEmail, userPassword);
     };
@@ -64,9 +67,9 @@ const useFirebase = () => {
         });
         setIsLogin(true);
     };
-    const saveUser = (email, displayName, method) => {
-        const user = { email, displayName };
-        fetch("https://still-shelf-07747.herokuapp.com/users", {
+    const saveUser = (data, role, method) => {
+        const user = { ...data , role: role};
+        fetch("http://localhost:5000/users", {
             method: method,
             headers: {
                 "content-type": "application/json",
@@ -95,6 +98,11 @@ const useFirebase = () => {
         });
         return () => unsubscribed;
     }, []);
+    useEffect(() => {
+        fetch(`http://localhost:5000/users/${user.email}`)
+            .then((res) => res.json())
+            .then((data) => setAdmin(data.admin));
+    }, [user.email]);
     return {
         handleEmailAndPassword,
         registerWithEmailAndPass,

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useAuth from '../../../hooks/useAuth';
 
 const AppBar = () => {
+    const { user , logOut} = useAuth()
+    console.log(user);
     const [menuOpen, setMenuOpen] = useState(false);
     return (
         <>
@@ -48,14 +51,33 @@ const AppBar = () => {
                                             Services
                                         </Link>
                                     </li>
-                                    <li className='nav-item'>
-                                        <Link
-                                            className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
-                                            to='/sign-up'
-                                        >
-                                            Sign Up
-                                        </Link>
-                                    </li>
+                                    {user?.email ? (
+                                        <li className='nav-item'>
+                                            <button
+                                                onClick={logOut}
+                                                className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                            >Logout</button>
+                                        </li>
+                                    ) : (
+                                        <li className='flex'>
+                                            <li className='nav-item'>
+                                                <Link
+                                                    className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                                    to='/sign-up'
+                                                >
+                                                    Sign Up
+                                                </Link>
+                                            </li>
+                                            <li className='nav-item'>
+                                                <Link
+                                                    className='px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'
+                                                    to='/login'
+                                                >
+                                                    Login
+                                                </Link>
+                                            </li>
+                                        </li>
+                                    )}
                                 </ul>
                             </div>
                         </div>
